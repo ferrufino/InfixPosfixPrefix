@@ -9,12 +9,12 @@
 
 #include <iostream>
 using namespace std;
-//#include <queue> //stl library
-#include <stack> // stl library
+#include <queue> //stl library
+//#include <stack> // stl library
 #include <fstream>
-//#include "Stack.h"
-//#include "Node.h"
-#include "Queue.h"
+#include "Stack.h"
+#include "Node.h"
+//#include "Queue.h"
 
 bool debug = true;
 
