@@ -9,11 +9,16 @@
 
 #include <iostream>
 using namespace std;
-#include <queue> //stl library
+//#include <queue> //stl library
 #include <stack> // stl library
 #include <fstream>
+//#include "Stack.h"
+//#include "Node.h"
+#include "Queue.h"
 
 bool debug = true;
+
+
 
 queue<char> finalQueue;
 stack<char> PosfixStack;
@@ -67,7 +72,7 @@ void DEBUGSecondStackOUTPUT (){
 void DEBUGQueueOUTPUT (){
 
     
-    cout<<"Posfijo: ";
+    cout<<"Postfix: ";
     while (!finalQueue.empty()) {
        
         cout<<finalQueue.front();
@@ -133,7 +138,7 @@ int main()
     string fileName;
     ifstream file;
     string aux;
-    
+    cout<<"Cual es el nombre del archivo?";
     cin>>fileName;
     // /Users/Ferrufino/Desktop/tutti.txt
     
@@ -224,7 +229,7 @@ int main()
         }
         
         cout<<"Infix: "<<aux<<endl;
-        DEBUGQueueOUTPUT();
+        DEBUGQueueOUTPUT(); //postfix output caller
         
         
     
@@ -306,13 +311,15 @@ int main()
             
             cont2--;
             
-        }// End loop while with variable "cont"
+            
+        }// End loop while with variable "cont = aux.length()"
         if (!firstPrefixStack.empty()) {
             emptyPrefixStack();
         }
-        DEBUGSecondStackOUTPUT();
+        DEBUGSecondStackOUTPUT(); //Prefix output caller
         
-        
+        //Evaluate from prefix
+
         
     }//End of loop while file for line read
     
