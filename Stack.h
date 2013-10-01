@@ -13,6 +13,8 @@ using namespace std;
 
 bool DEBUGSTACK = false;
 
+
+
 template <class T>
 class stack
 {
@@ -63,8 +65,7 @@ bool stack<T>::pop()
 		Node<T> *aux = bottom->next;
 		bottom->next = aux->next;
         
-		delete aux; //pointer being freed was not allocated
-        //aux=NULL;
+		delete aux; 
         
 	}
     stackSize-=1;
