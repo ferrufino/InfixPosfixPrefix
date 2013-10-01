@@ -48,14 +48,13 @@ bool stack<T>::pop()
 {
 	if(stackSize == 0)
 	{
-		return false;
-        bottom = NULL;
-	
+        return false;
     }
-    else if (stackSize==1){
+    else if (stackSize == 1){
         Node<T> *aux = bottom;
         bottom = NULL;
         delete aux;
+        
     
     
     }
@@ -75,9 +74,9 @@ bool stack<T>::pop()
 }
 
 template <class T>
-void stack<T>::push(T data)
+void stack<T>::push(T d)
 {
-	Node<T> *newNode = new Node<T>(data);
+	Node<T> *newNode = new Node<T>(d);
     
 	if(stackSize==0)
 	{
@@ -85,7 +84,8 @@ void stack<T>::push(T data)
 		newNode->next = newNode;
 		bottom = newNode;
         
-	}else
+	}
+    else
 	{
 		newNode->next = bottom->next;
 		bottom->next = newNode;

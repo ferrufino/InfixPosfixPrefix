@@ -9,12 +9,20 @@
 
 #include <iostream>
 using namespace std;
-#include <queue> //stl library
+//MIO
+//#include <queue> //stl library
 //#include <stack> // stl library
 #include <fstream>
-#include "Stack.h"
-#include "Node.h"
+//#include "Stack.h"
+//#include "Node.h"
 //#include "Queue.h"
+//Marcelo
+//#include "stackcopy.h"
+//#include "queuecopy.h"
+//Hugo
+#include "queueListCirc.h"
+#include "stackListDobEnc.h"
+
 
 bool debug = true;
 
@@ -55,9 +63,11 @@ void DEBUGSecondStackOUTPUT (){
     
     cout<<"Prefix: ";
     while (!secondPrefixStack.empty()) {
-        
-        cout<<secondPrefixStack.top();
-        secondPrefixStack.pop();
+        if (secondPrefixStack.top() != ')') {
+            cout<<secondPrefixStack.top();
+
+        }
+                secondPrefixStack.pop();
         
     }
     cout<<endl;
@@ -138,6 +148,17 @@ int main()
     string fileName;
     ifstream file;
     string aux;
+    
+    for (char i ='a'; i<'g'; i++) {
+        
+        firstPrefixStack.push(i);
+    }
+    while (!firstPrefixStack.empty()) {
+        
+        cout<<firstPrefixStack.top();
+        firstPrefixStack.pop();
+    }
+    
     cout<<"Cual es el nombre del archivo?";
     cin>>fileName;
     // /Users/Ferrufino/Desktop/tutti.txt
@@ -150,7 +171,7 @@ int main()
         int cont1=0;
        
         
-        while (cont1<aux.length()) { ///infijo to posfijo
+        while (cont1<aux.length()) { ///infijo to postfijo
             
             switch (aux[cont1]) {
             
@@ -207,8 +228,10 @@ int main()
                                 
                                 PosfixStack.pop();
                             }
-                          
-                            PosfixStack.push(aux[cont1]);
+                            if (aux[cont1] !=')') {
+                                PosfixStack.push(aux[cont1]);
+                            }
+                            
                             
                             //cout<<"DEBUG: there is a new value STACK and it is:"<<firstStack.top()<<endl;
                             
@@ -296,7 +319,10 @@ int main()
                                 firstPrefixStack.pop();
                             }
                             
-                            firstPrefixStack.push(aux[cont2]);
+                            
+                            if (aux[cont2] !=')') {
+                                firstPrefixStack.push(aux[cont2]);
+                            }
                             
                             //cout<<"DEBUG: there is a new value STACK and it is:"<<firstStack.top()<<endl;
                             
