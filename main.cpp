@@ -1,355 +1,1 @@
-//
-//  main.cpp
-//  Tarea4
-//
-//  Created by Gustavo Ferrufino on 9/27/13.
-//  Copyright (c) 2013 Gustavo Ferrufino. All rights reserved.
-//
-//No correr este codigo desde dropbox por el pwd para el archivo
-
-#include <iostream>
-using namespace std;
-//MIO
-#include <queue> //stl library
-#include <stack> // stl library
-#include <fstream>
-//#include "Stack.h"
-//#include "Node.h"
-//#include "Queue.h"
-//Marcelo
-//#include "stackcopy.h"
-//#include "queuecopy.h"
-//Hugo
-//#include "queueListCirc.h"
-//#include "stackListDobEnc.h"
-
-
-bool debug = true;
-
-
-
-queue<char> finalQueue;
-stack<char> PosfixStack;
-stack<char> firstPrefixStack;
-stack<char> secondPrefixStack;
-
-char operators[10]={'*','/','%','+','-','<','>','=','&','|'};
-int relation[10]={4,4,4,3,3,2,2,2,1,1};
-
-void emptyPrefixStack(){
-    
-    
-    while (!firstPrefixStack.empty()) {
-        
-        if (firstPrefixStack.top() == '(' || firstPrefixStack.top() == ')' ) {
-            
-            firstPrefixStack.pop();
-            
-        }
-        else{
-            
-            char temp = firstPrefixStack.top();
-            secondPrefixStack.push(temp);
-            firstPrefixStack.pop();
-            
-        }
-    }
-    
-    
-}
-
-void DEBUGSecondStackOUTPUT (){
-    
-    
-    cout<<"Prefix: ";
-    while (!secondPrefixStack.empty()) {
-        if (secondPrefixStack.top() != ')') {
-            cout<<secondPrefixStack.top();
-
-        }
-                secondPrefixStack.pop();
-        
-    }
-    cout<<endl;
-    
-    //cout<<endl<<"DEBUG: Shows finalQueue Output and Emptied finalQueue.";
-    
-}
-
-
-
-
-void DEBUGQueueOUTPUT (){
-
-    
-    cout<<"Postfix: ";
-    while (!finalQueue.empty()) {
-       
-        cout<<finalQueue.front();
-        finalQueue.pop();
-        
-    }
-    cout<<endl;
-
-    //cout<<endl<<"DEBUG: Shows finalQueue Output and Emptied finalQueue.";
-    
-}
-
-int relateOperatorPriority ( char temp  ){
-    
-    int num;
-    if ( temp == '(') {
-        return 0;
-    }
-    for (int i=0; i<10; i++) {
-        
-        if (temp == operators[i]) {
-            
-            num = relation[i];
-            
-        }
-        
-    }
-    
-    return num;
-}
-
-bool checkNumber( char num){
-    
-    return (num == '0'|| num == '1'|| num == '2'|| num == '3'|| num == '4'|| num == '5'
-            || num == '6'|| num == '7'|| num == '8'|| num == '9');
-    
-}
-
-
-void emptyStack(){ //for posfix use only
-    
-
-    while (!PosfixStack.empty()) {
-        
-        if (PosfixStack.top() == '(' || PosfixStack.top() == ')' ) {
-           
-            PosfixStack.pop();
-            
-        }
-        else{
-            
-            char temp = PosfixStack.top();
-            finalQueue.push(temp);
-            PosfixStack.pop();
-
-        }
-    }
-
-
-}
-int main()
-{
-    string fileName;
-    ifstream file;
-    string aux;
-    
-    for (char i ='a'; i<'g'; i++) {
-        
-        firstPrefixStack.push(i);
-    }
-    while (!firstPrefixStack.empty()) {
-        
-        cout<<firstPrefixStack.top();
-        firstPrefixStack.pop();
-    }
-    
-    cout<<"Cual es el nombre del archivo?";
-    cin>>fileName;
-    // /Users/Ferrufino/Desktop/tutti.txt
-    
-    file.open(fileName.c_str());
-    while (file>>aux) {
-        
-        //cout<<endl<<"DEBUG:  Entered file/new line."<<endl;
-        
-        int cont1=0;
-       
-        
-        while (cont1<aux.length()) { ///infijo to postfijo
-            
-            switch (aux[cont1]) {
-            
-                case '(':{
-                
-                    PosfixStack.push(aux[cont1]);
-                    //cout<<"DEBUG: there is a new value STACK and it is:"<<firstStack.top()<<endl;
-                    
-                    break;
-                }
-                
-                case ')':{
-                
-                    
-                   
-                  
-                    if (!finalQueue.empty()) {
-                        
-                        emptyStack();
-                                            }
-                    else{
-                       
-                        while (!PosfixStack.empty()) {
-                            
-                            emptyStack();
-                            
-                        }
-                       
-                        
-                    }
-                        
-                    
-                    
-                    
-                    
-                }
-                    
-                default:{
-                    //Number?
-                    if (checkNumber(aux[cont1])) {
-                        finalQueue.push(aux[cont1]);
-                        //cout<<"DEBUG: There is a new value in QUEUE and it is:"<<finalQueue.front()<<endl;
-                    }
-                    
-                    else{//Empty?
-                        if (PosfixStack.empty() && aux[cont1] != ')') {
-                            PosfixStack.push(aux[cont1]);
-                           // cout<<"DEBUG: there is a new value STACK and it is:"<<firstStack.top()<<endl;
-                        }
-                        else{//Operator?
-                            while ((PosfixStack.size()> 0) && ( relateOperatorPriority(PosfixStack.top()) >= relateOperatorPriority(aux[cont1]) ) ) {
-                                
-                                finalQueue.push(PosfixStack.top());
-                                
-                                PosfixStack.pop();
-                            }
-                            if (aux[cont1] !=')') {
-                                PosfixStack.push(aux[cont1]);
-                            }
-                            
-                            
-                            //cout<<"DEBUG: there is a new value STACK and it is:"<<firstStack.top()<<endl;
-                            
-                        }
-                    }
-                           
-                    break;
-                           
-                }
-            
-            }// End switch
-        
-            cont1++;
-        
-        }// End loop while with variable "cont"
-        if (!PosfixStack.empty()) {
-            emptyStack();
-        }
-        
-        cout<<"Infix: "<<aux<<endl;
-        DEBUGQueueOUTPUT(); //postfix output caller
-        
-        
-    
-        //Conversion from Infix to Prefix
-        
-        int cont2=(aux.length())-1;
-        
-        
-        while (cont2>=0) { ///infix to prefix
-            
-            switch (aux[cont2]) {
-                    
-                case ')':{
-                    
-                    firstPrefixStack.push(aux[cont2]);
-                    //cout<<"DEBUG: there is a new value STACK and it is:"<<firstStack.top()<<endl;
-                    
-                    break;
-                }
-                    
-                case '(':{
-                    
-                    
-                    
-                    
-                    if (!secondPrefixStack.empty()) {
-                        
-                        emptyPrefixStack();
-                    }
-                    else{
-                        
-                        if (!firstPrefixStack.empty()) {
-                            
-                            emptyPrefixStack();
-                            
-                        }
-                        
-                        
-                    }
-                    
-                    
-                    
-                    
-                    
-                }
-                    
-                default:{
-                    //Number?
-                    if (checkNumber(aux[cont2])) {
-                        secondPrefixStack.push(aux[cont2]);
-                        //cout<<"DEBUG: There is a new value in QUEUE and it is:"<<finalQueue.front()<<endl;
-                    }
-                    
-                    else{//Empty?
-                        if (firstPrefixStack.empty() && aux[cont2] != ')') {
-                            firstPrefixStack.push(aux[cont2]);
-                            // cout<<"DEBUG: there is a new value STACK and it is:"<<firstStack.top()<<endl;
-                        }
-                        else{//Operator?
-                            while ((firstPrefixStack.size()> 0) && ( relateOperatorPriority(firstPrefixStack.top()) >= relateOperatorPriority(aux[cont2]) ) ) {
-                                
-                                secondPrefixStack.push(firstPrefixStack.top());
-                                
-                                firstPrefixStack.pop();
-                            }
-                            
-                            
-                            if (aux[cont2] !=')') {
-                                firstPrefixStack.push(aux[cont2]);
-                            }
-                            
-                            //cout<<"DEBUG: there is a new value STACK and it is:"<<firstStack.top()<<endl;
-                            
-                        }
-                    }
-                    
-                    break;
-                    
-                }
-                    
-            }// End switch
-            
-            cont2--;
-            
-            
-        }// End loop while with variable "cont = aux.length()"
-        if (!firstPrefixStack.empty()) {
-            emptyPrefixStack();
-        }
-        DEBUGSecondStackOUTPUT(); //Prefix output caller
-        
-        //Evaluate from prefix
-
-        
-    }//End of loop while file for line read
-    
-    
-    return 0;
-}
-
+////  main.cpp//  Tarea4////  Created by Gustavo Ferrufino on 9/27/13.//  Copyright (c) 2013 Gustavo Ferrufino. All rights reserved.////No correr este codigo desde dropbox por el pwd para el archivo#include <iostream>using namespace std;//MIO#include <queue> //stl library#include <stack> // stl library#include <fstream>#include <stdlib.h>//#include "Stack.h"//#include "Node.h"//#include "Queue.h"//Marcelo//#include "stackcopy.h"//#include "queuecopy.h"//Hugo//#include "queueListCirc.h"//#include "stackListDobEnc.h"//BETO//#include "filaEncadenada.h"//#include "pilaDoblementeEncadenadaCircular.h"bool debug = true;bool ImpliesBool;queue<char> queueEvaluateO;stack<int> stackEvaluateO;queue<char> finalQueue;stack<char> PosfixStack;stack<char> firstPrefixStack;stack<char> secondPrefixStack;char operators[10]={'*','/','%','+','-','<','>','=','&','|'};int relation[10]={4,4,4,3,3,2,2,2,1,1};ofstream archOutput;int ascii (int a){    int ans = 0;    int numInt=0;        for (int i=48; i<58; i++) {                if(a == numInt){                        numInt=ans;                    }        ans++;    }    return numInt;    }void evaluateO(char o){    int x,y,z;    char a,b;    switch (o) {        case '|':        {            a=stackEvaluateO.top();            stackEvaluateO.pop();            y=ascii(a);                        b=stackEvaluateO.top();            stackEvaluateO.pop();            x=ascii(b);                        if((b == 1 || a == 1) && ImpliesBool == true)                stackEvaluateO.push(1);            else                stackEvaluateO.push(0);                                    break;        }        case '&':        {                        a=stackEvaluateO.top();                                    stackEvaluateO.pop();            y=ascii(a);            b=stackEvaluateO.top();            stackEvaluateO.pop();            x=ascii(b);                        if((b == 1 && a == 1) && ImpliesBool == true){                stackEvaluateO.push(1);                            }            else{                stackEvaluateO.push(0);                            }                                    break;        }        case '=':        {            a=stackEvaluateO.top();            stackEvaluateO.pop();            y=ascii(a);                        b=stackEvaluateO.top();            stackEvaluateO.pop();            x=ascii(b);            if(a == b)                stackEvaluateO.push(1);            else{                stackEvaluateO.push(0);                            }            ImpliesBool=true;            break;        }        case '>':        {            a=stackEvaluateO.top();            stackEvaluateO.pop();            y=ascii(a);                        b=stackEvaluateO.top();            stackEvaluateO.pop();            x=ascii(b);                        if(b>a)                stackEvaluateO.push(1);            else                stackEvaluateO.push(0);                        ImpliesBool=true;            break;        }        case '<':        {            a=stackEvaluateO.top();                        stackEvaluateO.pop();            b=stackEvaluateO.top();                        stackEvaluateO.pop();                                    if(b<a)                stackEvaluateO.push(1);            else                stackEvaluateO.push(0);                        ImpliesBool=true;                        break;        }        case '-':        {            a=stackEvaluateO.top();            stackEvaluateO.pop();            y=a-48;            //cout<<"DEBUG Number about to multiple: "<<y<<endl;                                    b=stackEvaluateO.top();            stackEvaluateO.pop();            x=b-48;            //cout<<"DEBUG Number about to multiple: "<<x<<endl;                        z= (b - a);                        stackEvaluateO.push(z);                        break;        }        case '+':{                        a=stackEvaluateO.top();            y=a-48;            stackEvaluateO.pop();                                    //cout<<"DEBUG Number about to multiple: "<<y<<endl;                                                b=stackEvaluateO.top();            x=b-48;            stackEvaluateO.pop();                        //cout<<"DEBUG Number about to multiple: "<<x<<endl;                        z= (x + a)-48;                        stackEvaluateO.push(z);            //cout<<"DEBUG valor de a: "<<a<<endl;            //cout<<"DEBUG valor de x: "<<x<<endl;            //cout<<"DEBUG valor de SUMA Z: "<<z<<endl;                        break;        }        case '%':        {            a=stackEvaluateO.top();            stackEvaluateO.pop();            y=a-48;            //cout<<"DEBUG Number about to multiple: "<<y<<endl;                                    b=stackEvaluateO.top();            cout<<b;            stackEvaluateO.pop();            x=b-48;                        //cout<<"DEBUG Number about to multiple: "<<x<<endl;                        z= (b % a);            a=z;            stackEvaluateO.push(z);                        //cout<<"Aparece! "<<stackEvaluateO.top()<<endl;                        break;        }        case '/':        {            a=stackEvaluateO.top();            stackEvaluateO.pop();                        b=stackEvaluateO.top();            stackEvaluateO.pop();            x=b-48;                                    z= (x / a);            stackEvaluateO.push(z);                                                break;        }        case '*':        {                        if(!stackEvaluateO.empty()){                                a=stackEvaluateO.top();                stackEvaluateO.pop();                y=a-48;                //cout<<"DEBUG Number about to multiple: "<<y<<endl;                                                                b=stackEvaluateO.top();                stackEvaluateO.pop();                x=b-48;                //cout<<"DEBUG Number about to multiple: "<<x<<endl;                int c;                c= (x * (a-48));                                stackEvaluateO.push(c);                //cout<<"DEBUG valor de a: "<<a<<endl;                //cout<<"DEBUG valor de x: "<<x<<endl;                //cout<<"DEBUG valor de MULTI C: "<<c<<endl;                                            }            else                cout<<"Error operator first than operands"<<endl;            break;        }        default:            break;    }            }void emptyPrefixStack(){            while (!firstPrefixStack.empty()) {                if (firstPrefixStack.top() == '(' || firstPrefixStack.top() == ')' ) {                        firstPrefixStack.pop();                    }        else{                        char temp = firstPrefixStack.top();            secondPrefixStack.push(temp);            firstPrefixStack.pop();                    }    }        }void DEBUGSecondStackOUTPUT (){            archOutput<<"Prefix: ";    while (!secondPrefixStack.empty()) {        if (secondPrefixStack.top() != ')') {            archOutput<<secondPrefixStack.top();                    }        secondPrefixStack.pop();            }    cout<<endl;        //cout<<endl<<"DEBUG: Shows finalQueue Output and Emptied finalQueue.";    }void DEBUGQueueOUTPUT (){            archOutput<<"Postfix: ";    while (!finalQueue.empty()) {                archOutput<<finalQueue.front();                queueEvaluateO.push(finalQueue.front());                finalQueue.pop();            }    archOutput<<endl;        //cout<<endl<<"DEBUG: Shows finalQueue Output and Emptied finalQueue.";    }int relateOperatorPriority ( char temp  ){        int num;    if ( temp == '(') {        return 0;    }    for (int i=0; i<10; i++) {                if (temp == operators[i]) {                        num = relation[i];                    }            }        return num;}bool checkNumber( char num){        return (num == '0'|| num == '1'|| num == '2'|| num == '3'|| num == '4'|| num == '5'            || num == '6'|| num == '7'|| num == '8'|| num == '9');    }void emptyStack(){ //for posfix use only            while (!PosfixStack.empty()) {                if (PosfixStack.top() == '(' || PosfixStack.top() == ')' ) {                        PosfixStack.pop();                    }        else{                        char temp = PosfixStack.top();            finalQueue.push(temp);            PosfixStack.pop();                    }    }        }int main(){    string fileName;    ifstream file;    string aux;        archOutput.open("/Users/Ferrufino/Documents/RESULTADOS.txt");        cout<<"Cual es el nombre del archivo?";    cin>>fileName;    // /Users/Ferrufino/Desktop/tutti.txt        file.open(fileName.c_str());    while (file>>aux) {                //cout<<endl<<"DEBUG:  Entered file/new line."<<endl;                int cont1=0;                        while (cont1<aux.length()) { ///infijo to postfijo                        switch (aux[cont1]) {                                    case '(':{                                        PosfixStack.push(aux[cont1]);                    //cout<<"DEBUG: there is a new value STACK and it is:"<<firstStack.top()<<endl;                                        break;                }                                    case ')':{                                                                                                    if (!finalQueue.empty()) {                                                emptyStack();                    }                    else{                                                while (!PosfixStack.empty()) {                                                        emptyStack();                                                    }                                                                    }                                                                                                                    }                                    default:{                    //Number?                    if (checkNumber(aux[cont1])) {                        finalQueue.push(aux[cont1]);                        //cout<<"DEBUG: There is a new value in QUEUE and it is:"<<finalQueue.front()<<endl;                    }                                        else{//Empty?                        if (PosfixStack.empty() && aux[cont1] != ')') {                            PosfixStack.push(aux[cont1]);                            // cout<<"DEBUG: there is a new value STACK and it is:"<<firstStack.top()<<endl;                        }                        else{//Operator?                            while ((PosfixStack.size()> 0) && ( relateOperatorPriority(PosfixStack.top()) >= relateOperatorPriority(aux[cont1]) ) ) {                                                                finalQueue.push(PosfixStack.top());                                                                PosfixStack.pop();                            }                            if (aux[cont1] !=')') {                                PosfixStack.push(aux[cont1]);                            }                                                                                    //cout<<"DEBUG: there is a new value STACK and it is:"<<firstStack.top()<<endl;                                                    }                    }                                        break;                                    }                                }// End switch                        cont1++;                    }// End loop while with variable "cont"        if (!PosfixStack.empty()) {            emptyStack();        }                        archOutput<<endl<<"Infix: "<<aux<<endl;                //passQueue();        DEBUGQueueOUTPUT(); //postfix output caller        //https://www.cs.arizona.edu/classes/cs227/spring12/infix.pdf        ///Evaluate        while (!queueEvaluateO.empty())        {                        if(checkNumber(queueEvaluateO.front()))            {                stackEvaluateO.push(queueEvaluateO.front());                //cout<<"DEBUG: number operand: "<<stackEvaluateO.top()<<endl;            }            else            {                //cout<<"DEBUG: operator to compare"<<queueEvaluateO.front()<<endl;                evaluateO(queueEvaluateO.front());            }                        queueEvaluateO.pop();        }                                        //Conversion from Infix to Prefix        ///http://www.eshikshak.co.in/index.php/data-structure/stack/convert-infix-to-prefix-expression        int cont2=(aux.length())-1;                        while (cont2>=0) { ///infix to prefix                        switch (aux[cont2]) {                                    case ')':{                                        firstPrefixStack.push(aux[cont2]);                    //cout<<"DEBUG: there is a new value STACK and it is:"<<firstStack.top()<<endl;                                        break;                }                                    case '(':{                                                                                                    if (!secondPrefixStack.empty()) {                                                emptyPrefixStack();                    }                    else{                                                if (!firstPrefixStack.empty()) {                                                        emptyPrefixStack();                                                    }                                                                    }                                                                                                                    }                                    default:{                    //Number?                    if (checkNumber(aux[cont2])) {                        secondPrefixStack.push(aux[cont2]);                        //cout<<"DEBUG: There is a new value in QUEUE and it is:"<<finalQueue.front()<<endl;                    }                                        else{//Empty?                        if (firstPrefixStack.empty() && aux[cont2] != ')') {                            firstPrefixStack.push(aux[cont2]);                            // cout<<"DEBUG: there is a new value STACK and it is:"<<firstStack.top()<<endl;                        }                        else{//Operator?                            while ((firstPrefixStack.size()> 0) && ( relateOperatorPriority(firstPrefixStack.top()) >= relateOperatorPriority(aux[cont2]) ) ) {                                                                secondPrefixStack.push(firstPrefixStack.top());                                                                firstPrefixStack.pop();                            }                                                                                    if (aux[cont2] !=')') {                                firstPrefixStack.push(aux[cont2]);                            }                                                        //cout<<"DEBUG: there is a new value STACK and it is:"<<firstStack.top()<<endl;                                                    }                    }                                        break;                                    }                                }// End switch                        cont2--;                                }// End loop while with variable "cont = aux.length()"        if (!firstPrefixStack.empty()) {            emptyPrefixStack();        }        DEBUGSecondStackOUTPUT(); //Prefix output caller                                if ((stackEvaluateO.top() == 1) && (ImpliesBool == true) ) {            archOutput<<endl<<"Evaluacion: "<<"true"<<endl;        }        else if((stackEvaluateO.top() == 0) && (ImpliesBool == true))        {            archOutput<<endl<<"Evaluacion: "<<"false"<<endl;        }        else            archOutput<<endl<<"Evaluacion: "<<stackEvaluateO.top()<<endl;                    }//End of loop while file for line read        archOutput.close();    return 0;}
