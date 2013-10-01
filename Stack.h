@@ -8,7 +8,17 @@
 using namespace std;
 #include <iostream>
 
-#include "Node.h"
+template <class T>
+class Node
+{
+public:
+    T info;
+    Node<T> *next;
+  
+    Node() { next=NULL;  }
+    Node(T data) { info = data; next=NULL; }
+};
+
 
 
 bool DEBUGSTACK = false;

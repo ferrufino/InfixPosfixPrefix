@@ -11,7 +11,20 @@
 
 #include <iostream>
 using namespace std;
-#include "Node.h"
+
+
+
+template <class T>
+class Node
+{
+public:
+    T info;
+    Node<T> *next;
+    Node<T> *prev;
+    Node() { next=NULL; prev=NULL; }
+    Node(T data) { info = data; next=NULL; prev=NULL; }
+};
+
 
 template <class T>
 class queue{

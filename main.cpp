@@ -10,8 +10,8 @@
 #include <iostream>
 using namespace std;
 //MIO
-//#include <queue> //stl library
-//#include <stack> // stl library
+#include <queue> //stl library
+#include <stack> // stl library
 #include <fstream>
 //#include "Stack.h"
 //#include "Node.h"
@@ -20,8 +20,8 @@ using namespace std;
 //#include "stackcopy.h"
 //#include "queuecopy.h"
 //Hugo
-#include "queueListCirc.h"
-#include "stackListDobEnc.h"
+//#include "queueListCirc.h"
+//#include "stackListDobEnc.h"
 
 
 bool debug = true;
